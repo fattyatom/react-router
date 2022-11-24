@@ -1,39 +1,46 @@
-name: test
+name: 🧪 Test
+
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - dev
+    tags-ignore:
+      - v*
+    paths-ignore:
+      - "docs/**"
+      - "**/README.md"
   pull_request:
-    types: [opened, synchronize]
+    paths-ignore:
+      - "docs/**"
+      - "**/*.md"
 
 jobs:
   test:
+    name: 🧪 Test
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [14.x]
-
     steps:
-      - uses: actions/checkout@v2
+      - name: 🛑 Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.11.0
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v3
+
+      - name: ⎔ Setup node
+        uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          cache: yarn
+          check-latest: true
+          node-version-file: ".nvmrc"
 
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
+      - name: 📥 Install deps
+        run: yarn --frozen-lockfile
 
-      - name: Check formatting
-        run: yarn format:check
-
-      - name: Lint
-        run: yarn lint
-
-      - name: Build
+      - name: 🏗 Build
         run: yarn build
 
-      - name: Test
+      - name: 🧪 Run tests
         run: yarn test
 
       - name: Check bundle size

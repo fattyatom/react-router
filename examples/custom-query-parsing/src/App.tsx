@@ -83,7 +83,7 @@ function Home() {
     let pizza: Pizza = {
       toppings: formData.getAll("toppings") as string[],
       crust: formData.get("crust") as string,
-      extraSauce: formData.get("extraSauce") === "on"
+      extraSauce: formData.get("extraSauce") === "on",
     };
 
     setPizza(pizza, { replace: true });
@@ -152,7 +152,7 @@ function Home() {
               type="radio"
               name="crust"
               value="deep-dish"
-              defaultChecked={pizza.crust === "dish-dish"}
+              defaultChecked={pizza.crust === "deep-dish"}
             />{" "}
             Deep Dish
           </label>

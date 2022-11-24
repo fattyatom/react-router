@@ -20,12 +20,12 @@ describe("A <StaticRouter>", () => {
         </StaticRouter>
       );
 
-      expect(location).toMatchObject({
+      expect(location).toEqual({
         pathname: "/the/path",
         search: "?the=query",
         hash: "#the-hash",
-        state: {},
-        key: expect.any(String)
+        state: null,
+        key: expect.any(String),
       });
     });
   });
@@ -48,12 +48,12 @@ describe("A <StaticRouter>", () => {
         </StaticRouter>
       );
 
-      expect(location).toMatchObject({
+      expect(location).toEqual({
         pathname: "/the/path",
         search: "?the=query",
         hash: "",
-        state: {},
-        key: expect.any(String)
+        state: null,
+        key: expect.any(String),
       });
     });
   });

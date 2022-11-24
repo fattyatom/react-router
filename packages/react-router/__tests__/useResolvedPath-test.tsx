@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as TestRenderer from "react-test-renderer";
-import type { Path } from "history";
+import type { Path } from "react-router";
 import { MemoryRouter, Routes, Route, useResolvedPath } from "react-router";
 
 function ShowResolvedPath({ path }: { path: string | Path }) {
@@ -43,7 +43,7 @@ describe("useResolvedPath", () => {
                   path={{
                     pathname: "/home",
                     search: new URLSearchParams({ user: "mj" }).toString(),
-                    hash: "#welcome"
+                    hash: "#welcome",
                   }}
                 />
               }

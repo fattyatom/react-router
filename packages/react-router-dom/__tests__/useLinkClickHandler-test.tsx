@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as ReactDOM from "react-dom";
+import * as ReactDOM from "react-dom/client";
 import { act } from "react-dom/test-utils";
 import type { LinkProps } from "react-router-dom";
 import {
@@ -7,7 +7,7 @@ import {
   Routes,
   Route,
   useHref,
-  useLinkClickHandler
+  useLinkClickHandler,
 } from "react-router-dom";
 
 function CustomLink({ to, replace, state, target, ...rest }: LinkProps) {
@@ -33,7 +33,7 @@ describe("Custom link with useLinkClickHandler", () => {
 
   it("navigates to the new page", () => {
     act(() => {
-      ReactDOM.render(
+      ReactDOM.createRoot(node).render(
         <MemoryRouter initialEntries={["/home"]}>
           <Routes>
             <Route
@@ -47,8 +47,7 @@ describe("Custom link with useLinkClickHandler", () => {
             />
             <Route path="about" element={<h1>About</h1>} />
           </Routes>
-        </MemoryRouter>,
-        node
+        </MemoryRouter>
       );
     });
 
@@ -60,7 +59,7 @@ describe("Custom link with useLinkClickHandler", () => {
         new MouseEvent("click", {
           view: window,
           bubbles: true,
-          cancelable: true
+          cancelable: true,
         })
       );
     });
@@ -73,7 +72,7 @@ describe("Custom link with useLinkClickHandler", () => {
   describe("with a right click", () => {
     it("stays on the same page", () => {
       act(() => {
-        ReactDOM.render(
+        ReactDOM.createRoot(node).render(
           <MemoryRouter initialEntries={["/home"]}>
             <Routes>
               <Route
@@ -87,8 +86,7 @@ describe("Custom link with useLinkClickHandler", () => {
               />
               <Route path="about" element={<h1>About</h1>} />
             </Routes>
-          </MemoryRouter>,
-          node
+          </MemoryRouter>
         );
       });
 
@@ -103,7 +101,7 @@ describe("Custom link with useLinkClickHandler", () => {
             view: window,
             bubbles: true,
             cancelable: true,
-            button: RightMouseButton
+            button: RightMouseButton,
           })
         );
       });
@@ -117,7 +115,7 @@ describe("Custom link with useLinkClickHandler", () => {
   describe("when the link is supposed to open in a new window", () => {
     it("stays on the same page", () => {
       act(() => {
-        ReactDOM.render(
+        ReactDOM.createRoot(node).render(
           <MemoryRouter initialEntries={["/home"]}>
             <Routes>
               <Route
@@ -133,8 +131,7 @@ describe("Custom link with useLinkClickHandler", () => {
               />
               <Route path="about" element={<h1>About</h1>} />
             </Routes>
-          </MemoryRouter>,
-          node
+          </MemoryRouter>
         );
       });
 
@@ -146,7 +143,7 @@ describe("Custom link with useLinkClickHandler", () => {
           new MouseEvent("click", {
             view: window,
             bubbles: true,
-            cancelable: true
+            cancelable: true,
           })
         );
       });
@@ -160,7 +157,7 @@ describe("Custom link with useLinkClickHandler", () => {
   describe("when the modifier keys are used", () => {
     it("stays on the same page", () => {
       act(() => {
-        ReactDOM.render(
+        ReactDOM.createRoot(node).render(
           <MemoryRouter initialEntries={["/home"]}>
             <Routes>
               <Route
@@ -174,8 +171,7 @@ describe("Custom link with useLinkClickHandler", () => {
               />
               <Route path="about" element={<h1>About</h1>} />
             </Routes>
-          </MemoryRouter>,
-          node
+          </MemoryRouter>
         );
       });
 
@@ -189,7 +185,7 @@ describe("Custom link with useLinkClickHandler", () => {
             bubbles: true,
             cancelable: true,
             // The Ctrl key is pressed
-            ctrlKey: true
+            ctrlKey: true,
           })
         );
       });

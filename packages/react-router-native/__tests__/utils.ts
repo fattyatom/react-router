@@ -1,4 +1,4 @@
-import * as TestRenderer from "react-test-renderer";
+import type * as TestRenderer from "react-test-renderer";
 
 export class MockEvent {
   type: string;
@@ -31,6 +31,6 @@ export function mockPromiseThatResolvesImmediatelyWith<T = void>(value?: T) {
   return {
     then(callback: (val?: T | undefined) => any) {
       callback(value);
-    }
+    },
   } as Promise<T>;
 }

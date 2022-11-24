@@ -95,7 +95,7 @@ function User(props) {
 
     // as well as location and navigate
     location,
-    navigate
+    navigate,
   } = props;
 
   // ...
@@ -105,7 +105,7 @@ function User(props) {
 import {
   useParams,
   useLocation,
-  useNavigate
+  useNavigate,
 } from "@reach/router";
 
 function User() {
@@ -124,10 +124,6 @@ All of this data lives on context already, but accessing it from there was awkwa
 Not polluting props also helps with TypeScript a bit and also prevents you from wondering where a prop came from when looking at a component. If you're using data from the router, it's completely clear now.
 
 Also, as a page grows, you naturally break it into multiple components and end up "prop drilling" that data all the way down the tree. Now you can access the route data anywhere in the tree. Not only is it more convenient, but it makes creating router-centric composable abstractions possible. If a custom hook needs the location, it can now simply ask for it with `useLocation()` etc..
-
-```sh
-npm install react-router@6 react-router-dom@6
-```
 
 ### Add a LocationProvider
 
@@ -150,9 +146,9 @@ ReactDOM.render(
 
 #### Justification:
 
-`@reach/router` uses a global, default history instance that has side-effects in the module, which prevents the ability to tree-shake the module whether you use the global or not. Additionally, React Router provides other history types (like hash history) that `@reach/router` doesn't, so it always requires a top-level location provider (in React Router these are `<BrowserRouter/>` and friends).
+`@reach/router` uses a global, default history instance that has side effects in the module, which prevents the ability to tree-shake the module whether you use the global or not. Additionally, React Router provides other history types (like hash history) that `@reach/router` doesn't, so it always requires a top-level location provider (in React Router these are `<BrowserRouter/>` and friends).
 
-Also, various modules like `Router`, `Link` and `useLocation` rendered outside of a `<LocationProvider/>` set up their own URL listener. It's generally not a problem, but every little bit counts. Putting a `<LocationProvider />` at the top allows the app to have a single URL listener.
+Also, various modules like `Router`, `Link` and `useLocation` rendered outside a `<LocationProvider/>` set up their own URL listener. It's generally not a problem, but every little bit counts. Putting a `<LocationProvider />` at the top allows the app to have a single URL listener.
 
 ## Breaking updates
 
@@ -163,7 +159,7 @@ You can pull a trick though and use both routers at the same time as you migrate
 ### Install React Router v6
 
 ```sh
-npm install react-router@next
+npm install react-router@6 react-router-dom@6
 ```
 
 ### Update `LocationProvider` to `BrowserRouter`
@@ -204,10 +200,10 @@ import { Router } from "@reach/router";
 </Router>;
 
 // React Router v6
-import { Routes } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 
 <Routes>
-  <Home path="/" />
+  <Route path="/" element={<Home />} />
   {/* ... */}
 </Routes>;
 ```
@@ -225,8 +221,8 @@ The `default` prop told `@reach/router` to use that route if no other routes mat
 
 // React Router v6
 <Routes>
-  <Home path="/" />
-  <NotFound path="*" />
+  <Route path="/" element={<Home />} />
+  <Route path="*" element={<NotFound />} />
 </Routes>
 ```
 
@@ -250,7 +246,7 @@ The way redirects work in `@reach/router` was a bit of an experiment. It "throws
 
 After bumping into issues (like app level `componentDidCatch`'s needing to rethrow the redirect), we've decided not to do that anymore in React Router v6.
 
-But we've gone a step farther and concluded that redirect's are not even the job of React Router. Your dynamic web server or static file server should be handling this and sending an appropriate response status code like 301 or 302.
+But we've gone a step farther and concluded that redirects are not even the job of React Router. Your dynamic web server or static file server should be handling this and sending an appropriate response status code like 301 or 302.
 
 Having the ability to redirect while matching in React Router at best requires you to configure the redirects in two places (your server and your routes) and at worst encouraged people to only do it in React Router--which doesn't send a status code at all.
 
@@ -290,7 +286,7 @@ If your app has a `<Link to="/events" />` still hanging around and the user
 clicks it, the server isn't involved since you're using a client-side router.
 You'll need to be more diligent about updating your links 😬.
 
-Alternatively, if you want to allow for outdated links, _and you realize you need to configure your redirects on both the client and the server_, go ahead and copy paste the `Redirect` component we were about to ship but then deleted.
+Alternatively, if you want to allow for outdated links, _and you realize you need to configure your redirects on both the client and the server_, go ahead and copy and paste the `Redirect` component we were about to ship but then deleted.
 
 ```jsx
 import { useEffect } from "react";
@@ -306,9 +302,12 @@ function Redirect({ to }) {
 
 // usage
 <Routes>
-  <Home path="/" />
-  <Users path="/events" />
-  <Redirect path="/dashboard" to="/events" />
+  <Route path="/" element={<Home />} />
+  <Route path="/events" element={<Users />} />
+  <Route
+    path="/dashboard"
+    element={<Redirect to="/events" />}
+  />
 </Routes>;
 ```
 
@@ -326,12 +325,12 @@ function SomeCustomLink() {
   return (
     <Link
       to="/some/where/cool"
-      getProps={obj => {
+      getProps={(obj) => {
         let {
           isCurrent,
           isPartiallyCurrent,
           href,
-          location
+          location,
         } = obj;
         // do what you will
       }}
@@ -429,7 +428,7 @@ let {
   path,
 
   // params are merged into the object with uri and path
-  eventId
+  eventId,
 } = useMatch("/events/:eventId");
 
 // React Router v6
@@ -438,7 +437,7 @@ let {
   path,
 
   // params get their own key on the match
-  params: { eventId }
+  params: { eventId },
 } = useMatch("/events/:eventId");
 ```
 
@@ -448,11 +447,11 @@ Also note the change from `uri -> url`.
 
 Just feels cleaner to have the params be separate from URL and path.
 
-Also nobody knows the difference between URL and URI, so we didn't want to start a bunch of pedantic arguments about it. React Router always called it URL, and it's got more production apps, so we used URL instead of URI.
+Also, nobody knows the difference between URL and URI, so we didn't want to start a bunch of pedantic arguments about it. React Router always called it URL, and it's got more production apps, so we used URL instead of URI.
 
 ### `<Match />`
 
-There is no `<Match/>` component in React Router v6. It used render props to compose behavior but we've got hooks now.
+There is no `<Match/>` component in React Router v6. It used render props to compose behavior, but we've got hooks now.
 
 If you like it, or just don't want to update your code, it's easy to backport:
 
